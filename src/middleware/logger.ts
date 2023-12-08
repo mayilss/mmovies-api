@@ -1,4 +1,4 @@
-import Express from "express";
+import { Request, Response, NextFunction } from "express";
 const { format } = require("date-fns");
 const { v4: uuid } = require("uuid");
 const fs = require("fs");
@@ -23,11 +23,9 @@ const logEvents = async (message: string, logName: string) => {
   }
 };
 
-export const logger = (
-  req: Express.Request,
-  _res: Express.Response,
-  next: Express.NextFunction
-) => {
+const logger = (req: Request, _res: Response, next: NextFunction) => {
   logEvents(`${req.method}\t${req.headers.origin}\t${req.url}`, "reqLog.txt");
   next();
 };
+
+export default logger;
