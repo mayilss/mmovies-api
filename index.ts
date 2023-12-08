@@ -4,6 +4,8 @@ import connectDB from "./src/config/db-connect";
 import logger from "./src/middleware/logger";
 import dotenv from "dotenv";
 import routesHandler from "./src/routes";
+import cookieParser from "cookie-parser";
+import errorHandler from "./src/middleware/errorHandler";
 
 dotenv.config();
 const app = express();
@@ -16,11 +18,15 @@ app.use(logger);
 app.use(urlencoded({ extended: false }));
 app.use(json());
 
+app.use(cookieParser());
+
 routesHandler(app);
 
-app.get("/", (_req: Request, res: Response) => {
-  res.send("Hello World!");
+app.all("*", (_request: Request, response: Response) => {
+  response.status(404).json({ message: "404 Not Found" });
 });
+
+app.use(errorHandler);
 
 mongoose.connection.once("open", () => {
   app.listen(port, () => {
