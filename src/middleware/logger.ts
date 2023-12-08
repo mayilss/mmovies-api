@@ -23,7 +23,7 @@ const logEvents = async (message: string, logName: string) => {
   }
 };
 
-const logger = (
+export const logger = (
   req: Express.Request,
   _res: Express.Response,
   next: Express.NextFunction
@@ -31,5 +31,3 @@ const logger = (
   logEvents(`${req.method}\t${req.headers.origin}\t${req.url}`, "reqLog.txt");
   next();
 };
-
-module.exports = logger;
