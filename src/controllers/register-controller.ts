@@ -1,10 +1,10 @@
 import UserSchema from "../models/user";
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
-import { User } from "../types";
+import { IUser } from "../types";
 
 const registerUserHandler = async (request: Request, response: Response) => {
-  const user: User = request.body;
+  const user: IUser = request.body;
 
   const isInvalid = user && Object.values(user).some((value) => value === "");
   if (isInvalid) {

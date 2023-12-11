@@ -5,7 +5,7 @@ import logger from "./src/middleware/logger";
 import dotenv from "dotenv";
 import routesHandler from "./src/routes";
 import cookieParser from "cookie-parser";
-import errorHandler from "./src/middleware/errorHandler";
+import errorHandler from "./src/middleware/error-handler";
 
 dotenv.config();
 const app = express();
