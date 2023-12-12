@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-const handleLogin = async (request: Request, response: Response) => {
+const login = async (request: Request, response: Response) => {
   const { username, password } = request.body;
   if (!username || !password) {
     return response
@@ -48,4 +48,4 @@ const handleLogin = async (request: Request, response: Response) => {
   }
 };
 
-export const AuthController = { handleLogin };
+export const AuthController = { login };

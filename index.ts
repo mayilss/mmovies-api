@@ -9,7 +9,7 @@ import errorHandler from "./src/middleware/error-handler";
 
 dotenv.config();
 const app = express();
-const port = 3000;
+const PORT = 3000;
 
 connectDB();
 
@@ -29,7 +29,7 @@ app.all("*", (_request: Request, response: Response) => {
 app.use(errorHandler);
 
 mongoose.connection.once("open", () => {
-  app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+  app.listen(PORT, () => {
+    console.log(`Example app listening on port ${PORT}`);
   });
 });

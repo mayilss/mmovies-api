@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { IUser } from "../types";
 
-const registerUserHandler = async (request: Request, response: Response) => {
+const registerUser = async (request: Request, response: Response) => {
   const user: IUser = request.body;
 
   const isInvalid = user && Object.values(user).some((value) => value === "");
@@ -38,5 +38,5 @@ const registerUserHandler = async (request: Request, response: Response) => {
 };
 
 export const RegisterController = {
-  registerUserHandler,
+  registerUser,
 };

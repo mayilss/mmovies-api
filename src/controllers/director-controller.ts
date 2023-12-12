@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IDirector } from "../types";
 import DirectorSchema from "../models/director";
 
-const addDirectorHandler = async (request: Request, response: Response) => {
+const add = async (request: Request, response: Response) => {
   const director: IDirector = request.body;
   const isInvalid = !director.firstname || !director.lastname;
   if (isInvalid) {
@@ -18,7 +18,7 @@ const addDirectorHandler = async (request: Request, response: Response) => {
   }
 };
 
-const getAllDirectors = async (request: Request, response: Response) => {
+const getAll = async (request: Request, response: Response) => {
   const directors = await DirectorSchema.find();
 
   if (!directors) {
@@ -42,7 +42,7 @@ const getById = async (request: Request, response: Response) => {
 };
 
 export const DirectorController = {
-  getAllDirectors,
-  addDirectorHandler,
+  getAll,
+  add,
   getById,
 };
