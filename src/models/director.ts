@@ -9,6 +9,9 @@ const directorSchema = new Schema({
     type: String,
     required: true,
   },
+  imagePath: {
+    type: String,
+  },
   birthyear: {
     type: Number,
   },
