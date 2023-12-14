@@ -7,18 +7,16 @@ const registerUser = async (request: Request, response: Response) => {
 
   const isInvalid = user && Object.values(user).some((value) => value === "");
   if (isInvalid) {
-    return response
-      .status(400)
-      .json({ message: "Please fill the form completely." });
+    response.status(400).json({ message: "Please fill the form completely." });
+    return;
   }
 
   const duplicate = await UserSchema.findOne({
     username: user.username,
   }).exec();
   if (duplicate) {
-    return response
-      .status(400)
-      .json({ message: "This username already exists." });
+    response.status(400).json({ message: "This username already exists." });
+    return;
   }
 
   try {

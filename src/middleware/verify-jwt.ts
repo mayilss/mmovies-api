@@ -10,12 +10,14 @@ const verifyJWT = (
     request.headers.authorization || request.headers.Authorization;
 
   if (!authHeader && !authHeader?.startsWith("Bearer ")) {
-    return response.sendStatus(401);
+    response.sendStatus(401);
+    return;
   }
   const token = authHeader && (authHeader as string).split(" ")[1];
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!, (error, decoded) => {
     if (error) {
-      return response.sendStatus(403);
+      response.sendStatus(403);
+      return;
     }
     next();
   });
