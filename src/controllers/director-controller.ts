@@ -1,8 +1,12 @@
 import { Request, Response } from "express";
-import DirectorSchema from "../models/director";
 import { Helpers } from "../helpers";
-import { IBaseController } from "../interfaces/base";
+import {
+  IBaseController,
+  IIdQuery,
+  IPaginationRequestDTO,
+} from "../interfaces/base";
 import { IAddDirectorDTO, IUpdateDirectorDTO } from "../interfaces/director";
+import DirectorSchema from "../models/director";
 
 class DirectorController
   implements IBaseController<IAddDirectorDTO, IUpdateDirectorDTO>
@@ -19,14 +23,12 @@ class DirectorController
   }
 
   async add(
-    request: Request<IAddDirectorDTO>,
+    request: Request<unknown, unknown, IAddDirectorDTO>,
     response: Response
   ): Promise<void> {
     const director = request.body;
 
-    console.log(this);
     const isValid = this.validateRequestBody(director);
-
     if (!isValid) {
       response
         .status(400)
@@ -42,10 +44,10 @@ class DirectorController
   }
 
   async update(
-    request: Request<IUpdateDirectorDTO>,
+    request: Request<unknown, unknown, IUpdateDirectorDTO>,
     response: Response
   ): Promise<void> {
-    const id = request?.body?.id;
+    const { id } = request?.body;
     if (!id) {
       response.status(400).json({ message: "ID is required" });
       return;
@@ -72,7 +74,10 @@ class DirectorController
     }
   }
 
-  async remove(request: Request, response: Response): Promise<void> {
+  async remove(
+    request: Request<unknown, unknown, unknown, IIdQuery>,
+    response: Response
+  ): Promise<void> {
     const { id } = request?.query;
     if (!id) {
       response.status(400).json({ message: "ID is required." });
@@ -92,20 +97,45 @@ class DirectorController
     }
   }
 
-  async getList(_request: Request, response: Response): Promise<void> {
+  async getList(
+    request: Request<unknown, unknown, unknown, IPaginationRequestDTO>,
+    response: Response
+  ): Promise<void> {
     try {
-      const directors = await DirectorSchema.find();
+      const { page, limit, fullname } = request.query;
+      const pageNumber = parseInt(page as string, 10);
+      const limitNumber = parseInt(limit as string, 10);
+      const skip = (pageNumber - 1) * limitNumber;
+
+      let filter: any = {};
+
+      if (fullname) {
+        const fuzzyRegex = [...(fullname as string)].join(".*");
+
+        filter.$or = [
+          { firstname: { $regex: new RegExp(fuzzyRegex, "i") } },
+          { lastname: { $regex: new RegExp(fuzzyRegex, "i") } },
+        ];
+      }
+
+      const totalCount = await DirectorSchema.countDocuments(filter);
+      const directors = await DirectorSchema.find(filter)
+        .skip(skip)
+        .limit(limitNumber);
       if (!directors) {
         response.status(404).json({ message: "No directors found." });
         return;
       }
-      response.json(directors);
+      response.json({ totalCount, data: directors });
     } catch (error) {
       Helpers.handleServerError(response);
     }
   }
 
-  async getById(request: Request, response: Response): Promise<void> {
+  async getById(
+    request: Request<unknown, unknown, unknown, IIdQuery>,
+    response: Response
+  ): Promise<void> {
     const { id } = request?.query;
     if (!id) {
       response.status(400).json({ message: `ID is required` });
